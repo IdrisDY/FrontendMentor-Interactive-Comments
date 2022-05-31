@@ -1,12 +1,12 @@
-import Counter from './components/Counter'
 import logo from './logo.svg';
 import './App.css';
 import Comment from './Comments/Comment';
-
-import{useEffect} from 'react'
+import{useEffect,useState} from 'react'
+import Modal from './Comments/Modal';
+import Post_Comment from './Comments/Post-Comment';
 // import data from './public/data.json'
 function App() {
-
+  
   return (
     <div className="App">
      <Comment/>

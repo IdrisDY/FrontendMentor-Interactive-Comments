@@ -1,9 +1,10 @@
 import React from 'react'
 import {useState} from 'react'
-
-const Post_Comment = () => {
+import Modal from './Modal'
+const Post_Comment = ({buttonAction}) => {
    const [message, setMessage] = useState('')
    const [post, setPost] =  useState(false)
+   const [btnclick, setbtnClick] =  useState(false)
 
 const type=(e)=>{
    const text = e.target.value
@@ -22,7 +23,8 @@ const type=(e)=>{
 <div className='low-box' >
 {message}
    <img src='./images/avatars/image-juliusomo.webp' alt=''/>
-   <button id='send-btn'> SEND</button>
+   <button id='send-btn' onClick={()=>setbtnClick(true)}> {buttonAction}
+</button>
 </div>
 
 </div>
