@@ -1,15 +1,22 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
 import Post_Comment from './Post-Comment'
+import Modal from './Modal'
+import PostedComment from './Posted'
 const Comment = () => {
 
 const [comments, setComment] = useState([])
 const [replies, setReply] = useState([])
 const [scoreval, setScoreval] = useState()
 const [loading, setLoading] = useState(true)
-const [replyclick, setReplyclick] = useState(false)
+const [delclick, setdelClick] = useState(false)
 const [replyId, setReplyId] = useState(0)
+const [obj, setObj] = useState({})
 
+
+const handleDelete=(id)=>{
+   return replies.filter(reply=>reply.id ==3 )
+}
 
 function handleclick(id){
    setReplyId(id)
@@ -82,12 +89,15 @@ comments.map(comment=>{
 
 <div className='replies'>
 
-   {replies.map(reply=>{
+
+   {
+
+      replies.map(reply=>{
       const { id, content, createdAt, score, user,replyingTo}= reply
    const {image,username} = user
    const {png, webp}= image
-   console.log(id)
 
+   console.log(id)
      
    return(
       <div key={id} className='reply-container'>
@@ -95,8 +105,11 @@ comments.map(comment=>{
 
    <img src={png} alt='' className='user-img'/>
    <h4> {username} </h4>
-   { id== 4?<span id='you-tag'> you</span>:null}
+   { id === 4?<span id='you-tag'> you</span>:null}
    <span> {createdAt}</span> 
+   <button onclick={()=>handleDelete(id)}> { id=== 4?<Modal/>:null}</button>
+   { id === 4?<button class='mod-btn'> <svg width="14" height="14" xmlns="http://www.w3.org/2000/svg"><path d="M13.479 2.872 11.08.474a1.75 1.75 0 0 0-2.327-.06L.879 8.287a1.75 1.75 0 0 0-.5 1.06l-.375 3.648a.875.875 0 0 0 .875.954h.078l3.65-.333c.399-.04.773-.216 1.058-.499l7.875-7.875a1.68 1.68 0 0 0-.061-2.371Zm-2.975 2.923L8.159 3.449 9.865 1.7l2.389 2.39-1.75 1.706Z" fill="#5357B6"/></svg></button>:null}
+{delclick?<Modal/>:null}
 </div>
 
 <div  className='main'>
@@ -127,7 +140,6 @@ comments.map(comment=>{
 
    }
 </div>
-
 <Post_Comment buttonAction='SEND'/>
 
     </div>
