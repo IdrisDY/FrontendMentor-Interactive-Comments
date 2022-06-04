@@ -1,14 +1,15 @@
 import React, { useState } from 'react'
 
-const Modal = () => {
+const Modal = ({handlecloseClick}) => {
 const [btnClicked, setbtnClicked] = useState(false)
 const [closeClicked, setcloseClicked] = useState(false)
+
 window.onclick= function(e){
 }
-function handlecloseClick(){
-   !closeClicked?setcloseClicked(true):setcloseClicked(false)
-   setbtnClicked(false)
-}
+// function handlecloseClick(){
+//    !closeClicked?setcloseClicked(true):setcloseClicked(false)
+//    setbtnClicked(false)
+//     }
 function handleopenClick(){
    if(!btnClicked)
    {setbtnClicked(true)}

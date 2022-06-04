@@ -2,29 +2,31 @@ import React from 'react'
 import {useState} from 'react'
 import Modal from './Modal'
 import PostedComment from './Posted'
-const Post_Comment = ({buttonAction}) => {
+const InputComment = ({buttonAction, postClick}) => {
    const [message, setMessage] = useState('')
-   const [post, setPost] =  useState(false)
    const [btnclick, setbtnClick] =  useState(false)
+   const [move, setMove]= useState(false)
+
 const type=(e)=>{
    const text = e.target.value
    setMessage(text)
 }
+const TxtAreadisabled = message.length == 0
 
-// // text.onclick = function(event){
-// //    console.log(event.target.value)
+// function postClick(){
+//    !btnclick?setbtnClick(true):setbtnClick(false)
 // }
-
+// text.onclick = function(event){
+//    console.log(event.target.value)
 
   return (
     <div>
-    {btnclick?<PostedComment content={message}/>:null}
        <div className = 'comment-box'>
-<input id='inp' onChange={type}  type='text' placeholder='Add a comment'/>
+<textarea id='inp' onChange={type}  type='text' placeholder='Add a comment' value={message}/>
 <div className='low-box' >
 
    <img src='./images/avatars/image-juliusomo.webp' alt=''/>
-   <button id='send-btn' onClick={()=>!btnclick?setbtnClick(true):setbtnClick(false)}> {buttonAction}
+   <button id='send-btn' onClick={()=>postClick(message)} > {buttonAction}
 </button>
 </div>
 
@@ -32,7 +34,6 @@ const type=(e)=>{
 
     </div>
   )
-
 }
 
-export default Post_Comment
+export default InputComment
