@@ -3,96 +3,120 @@ import { useState, useEffect } from 'react'
 import   InputComment from './Post-Comment'
 import Modal from './Modal'
 import PostedComment from './Posted'
+import NewComment from './reply'
 const Comment = () => {
 
 const [comments, setComment] = useState([])
-const [replies, setReply] = useState([])
+// const [replies, setReply] = useState([])
 const [scoreval, setScoreval] = useState()
 const [loading, setLoading] = useState(true)
 const [delclick, setdelClick] = useState(false)
 const [replyId, setReplyId] = useState(0)
 const [replyclick, setreplyclick] = useState(false)
-const [message, setMessage] = useState('')
+const [message, setMessage] = useState("")
 const [currentUser, setcurrentUser] = useState({})
 const [commentreply, setCommentreply]= useState([])
 
 
-
+// new object template to be pushed to reply array;content = message in state
 const userobj = {
-   user: currentUser,
+   user: {
+      ...currentUser
+    },
      content:message,
-     id:replyId
+     Parentid:replyId,
 }
-const getReplies=(id)=>{ return comments.filter(comment=>comment.id == id).sort((a,b)=>
-   new Date(a.createdAt).getTime()-new Date(b.createdAt).getTime())
 
-}
-function handleMessage(message,id){
-   console.log('addtext', message,id)
+
+/**
+ * When the user clicks on the reply button, the replyclick state is set to true, and the message state
+ * is set to the message that the user wants to reply to.
+ * @param message - the message that the user typed in
+ * @param replyId - the id of the comment that the user is replying to
+ */
+
+function handleMessage(message,replyId){
+   console.log('addtext', message,replyId)
 !replyclick?setreplyclick(true):setreplyclick(false)
 setMessage(message)
-console.log(message)
+console.log(userobj)
+console.log(comments.replies)
 }
+
+
 const handleDelete=(id)=>{
- replies.filter(reply=>reply.id ==3 )
 }
 
 function handleclick(id){
-   replies.filter(reply=>reply.id !== id )
    setReplyId(id)
    console.log(id)
    setreplyclick(false)
-   setMessage('')
+   
+
 }
    useEffect(() => {
    
-      const getData =  async() => {
-        const data = await fetch('data.json',{
-          headers:{
-            'Content-Type':'application/json',
-            'Accept':'application/json'
-          }})
+const getData =  async() => {
+const data = await fetch('data.json',{
+      headers:{
+      'Content-Type':'application/json',
+      'Accept':'application/json'
+}})   
 
-   
-        const resp = await data.json()
+
+const resp = await data.json()
         setLoading(false)
         console.log(resp.comments[1].replies)
         setComment(resp.comments)
-        setReply(resp.comments[1].replies)
-console.log(resp.comments.replies)
-setCommentreply(resp.comments[0].replies)
-setcurrentUser(resp.currentUser)
+      //   setReply(resp.comments[1].replies)
+         console.log(resp.comments.replies)
+         console.log(comments.id)
+         // setCommentreply(resp.comments[0].replies)
+         setcurrentUser(resp.currentUser)
        }
        getData()
   
      }, [])
 
+
+
+
      if(loading){
       return <h1> Loading ...</h1>
    }
-   
-  
+
+
+
+
+
+
   return (
     <div className='container'>
-       This is playing
+       {/* Mapping main comments */}
 {
 comments.map(comment=>{
-   const { id, content, createdAt, score, user,replies}= comment
-
+   const { id, content, createdAt, score, user,replies} = comment
    {/* console.log(score) */}
    const {image,username} = user
    const {png, webp}= image
-   console.log(replies)
+const [one,two]= replies
+console.log (comments)
+console.log (two)
+id===userobj.Parentid && replyclick?replies.push(userobj):<InputComment/>
 
+{/* replyclick && userobj.id == replyId? replies.push(userobj):<InputComment/> */}
    return(
       <div key={id} className='reply-container'>
-<div  className='user-profile'>
+      
 
+{/* <NewComment png={png} username={username} key={id} score={score} content={content} createdAt={createdAt} replies={getReplies(id)}/> */}
+
+
+<div  className='user-profile'>
    <img src={png} alt='' className='user-img'/>
    <h4> {username} </h4>
    <span> {createdAt}</span> 
 </div>
-
 <div  className='main'>
    <p>{content}</p>
 
@@ -108,28 +132,27 @@ comments.map(comment=>{
       <button id='reply-text' onClick={()=>handleclick(id)} >Reply</button>
    </div>
 </div>
+
+{/* This is a ternary operator. It is checking if the replyId is equal to the id of the comment that the
+user is replying to. If it is, then it will render the InputComment component. If it is not, then it
+will render null. */}
 
 {replyId == id? <InputComment buttonAction='REPLY' postClick={handleMessage}/>:null}
 <div> 
 
-
-
-
-
 <div>
-
-{replies.length > 0 && (
-   <div className='reply-contain'>
-   {replies.map(reply=>{
-      const { id, content, createdAt, score, user,replies}= reply
-console.log(reply)
-{/* console.log(score) */}
-const {image,username} = user
+{/* Mapping the replies  */}
+{
+replies.map(rep=>{
+   console.log(rep) 
+   const {user,score,createdAt,id,content}= rep
+ const {image,username} = user
 const {png, webp}= image
+console.log(rep.score) 
+   console.log('mapinho')
 
-
-return(
-      <div key={id} className='comment-container'>
+   return(
+      <div key={rep.id} className='comment-container'>
 <div  className='user-profile'>
 
    <img src={png} alt='' className='user-img'/>
@@ -152,18 +175,18 @@ return(
       <button id='reply-text' onClick={()=>handleclick(id)} >Reply</button>
    </div>
 </div>
-{replyId == id && replyclick?replies.push(userobj):null}
 </div>)
-   })}
+
+
+})
+
+  }
   
    </div>
-)}
+
 
 
 </div>
-
-
-
 
 
 
@@ -180,8 +203,8 @@ return(
 
 
 </div>
-</div>
 
+   
 
 
    )

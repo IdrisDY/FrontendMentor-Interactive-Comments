@@ -18,7 +18,6 @@ const TxtAreadisabled = message.length == 0
 // }
 // text.onclick = function(event){
 //    console.log(event.target.value)
-
   return (
     <div>
        <div className = 'comment-box'>
