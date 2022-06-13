@@ -13,19 +13,13 @@ const [loading, setLoading] = useState(true)
 const [delclick, setdelClick] = useState(false)
 const [replyId, setReplyId] = useState(0)
 const [replyclick, setreplyclick] = useState(false)
-const [message, setMessage] = useState("")
+// const [message, setMessage] = useState("")
 const [currentUser, setcurrentUser] = useState({})
 const [commentreply, setCommentreply]= useState([])
+const [del, setDel]= useState(false)
 
 
 // new object template to be pushed to reply array;content = message in state
-const userobj = {
-   user: {
-      ...currentUser
-    },
-     content:message,
-     Parentid:replyId,
-}
 
 
 /**
@@ -35,16 +29,43 @@ const userobj = {
  * @param replyId - the id of the comment that the user is replying to
  */
 
-function handleMessage(message,replyId){
-   console.log('addtext', message,replyId)
+
+function handleMessage(message){
+   console.log('addtext', message)
 !replyclick?setreplyclick(true):setreplyclick(false)
-setMessage(message)
+
+
+const userobj = {
+   user: {
+      ...currentUser
+    },
+     content:message,
+     Parentid:replyId,
+   
+}
+// setMessage(message)
 console.log(userobj)
 console.log(comments.replies)
+comments.map((reply)=>{
+const {replies,id}=reply
+console.log(id)
+id === userobj.Parentid?replies.push(userobj):<PostedComment/>
+ })
 }
 
 
 const handleDelete=(id)=>{
+   console.log(id)
+ return comments.map(reply=>{
+   reply.replies.map(repd=>{
+const newArr = commentreply.filter(rep=>rep.id !== id)
+setDel(true)
+   })
+// console.log(newArr)
+// setComment([reply.replies=newArr],...reply)
+
+})
+
 }
 
 function handleclick(id){
@@ -54,6 +75,8 @@ function handleclick(id){
    
 
 }
+
+
    useEffect(() => {
    
 const getData =  async() => {
@@ -70,9 +93,13 @@ const resp = await data.json()
         setComment(resp.comments)
       //   setReply(resp.comments[1].replies)
          console.log(resp.comments.replies)
-         console.log(comments.id)
          // setCommentreply(resp.comments[0].replies)
          setcurrentUser(resp.currentUser)
+         // comments.map(comment=>{
+         //    comment.replies.length > 0 &&
+         //    setCommentreply(comment?.replies)
+         // })
+         console.log(  commentreply)
        }
        getData()
   
@@ -102,7 +129,7 @@ comments.map(comment=>{
 const [one,two]= replies
 console.log (comments)
 console.log (two)
-id===userobj.Parentid && replyclick?replies.push(userobj):<InputComment/>
+{/* id===userobj.Parentid && replyclick?replies.push(userobj):<InputComment/> */}
 
 {/* replyclick && userobj.id == replyId? replies.push(userobj):<InputComment/> */}
    return(
@@ -142,15 +169,18 @@ will render null. */}
 
 <div>
 {/* Mapping the replies  */}
+
 {
+  replies.length > 0 && 
 replies.map(rep=>{
    console.log(rep) 
    const {user,score,createdAt,id,content}= rep
  const {image,username} = user
 const {png, webp}= image
+const  newCreatedAt = new Date(rep.createdAt).toLocaleDateString()
 console.log(rep.score) 
    console.log('mapinho')
-
+if(del & id == 4)return null
    return(
       <div key={rep.id} className='comment-container'>
 <div  className='user-profile'>
@@ -158,6 +188,11 @@ console.log(rep.score)
    <img src={png} alt='' className='user-img'/>
    <h4> {username} </h4>
    <span> {createdAt}</span> 
+   {username =='juliusomo'?
+      <div>
+   <Modal handlecloseClick={()=>handleDelete(id)}/>
+   <button><span>Edit</span><svg width="14" height="14" xmlns="http://www.w3.org/2000/svg"><path d="M13.479 2.872 11.08.474a1.75 1.75 0 0 0-2.327-.06L.879 8.287a1.75 1.75 0 0 0-.5 1.06l-.375 3.648a.875.875 0 0 0 .875.954h.078l3.65-.333c.399-.04.773-.216 1.058-.499l7.875-7.875a1.68 1.68 0 0 0-.061-2.371Zm-2.975 2.923L8.159 3.449 9.865 1.7l2.389 2.39-1.75 1.706Z" fill="#5357B6"/></svg></button>
+   </div>:null}
 </div>
 
 <div  className='main'>

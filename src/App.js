@@ -5,6 +5,7 @@ import{useEffect,useState} from 'react'
 import Modal from './Comments/Modal';
 import Post_Comment from './Comments/Post-Comment';
 // import data from './public/data.json'
+import Reducer from './Comments/reply';
 function App() {
   
   return (
