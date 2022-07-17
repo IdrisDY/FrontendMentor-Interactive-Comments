@@ -6,10 +6,10 @@ const [closeClicked, setcloseClicked] = useState(false)
 
 window.onclick= function(e){
 }
-// function handlecloseClick(){
-//    !closeClicked?setcloseClicked(true):setcloseClicked(false)
-//    setbtnClicked(false)
-//     }
+function cancelClick(){
+   !closeClicked?setcloseClicked(true):setcloseClicked(false)
+   setbtnClicked(false)
+    }
 function handleopenClick(){
    if(!btnClicked)
    {setbtnClicked(true)}
@@ -26,7 +26,7 @@ function handleopenClick(){
     <h3>Delete comment</h3>
     <p> Are you sure you want to delete this comment?This will remove the comment and cant be undone.</p>
  <div>
-    <button> NO, CANCEL</button>
+    <button onClick={cancelClick}> NO, CANCEL</button>
     <button id="closeModal" className={closeClicked? "Close":""} onClick={handlecloseClick}>YES,DELETE</button>
 
  </div>

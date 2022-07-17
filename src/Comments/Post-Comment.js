@@ -24,12 +24,12 @@ const txtAreaDisabled = message.length === 0
 //    console.log(event.target.value)
   return (
     <div>
-       <form className = 'comment-box' onSubmit={onSubmit}>
+       <form className = 'comment-box' >
 <textarea id='inp' onChange={type}  type='text' placeholder='Add a comment'  />
 <div className='low-box' >
 
    <img src='./images/avatars/image-juliusomo.webp' alt=''/>
-   <button id='send-btn'  disabled={txtAreaDisabled} > {buttonAction}
+   <button id='send-btn'  disabled={txtAreaDisabled} onClick={onSubmit} > {buttonAction}
 </button>
 </div>
 

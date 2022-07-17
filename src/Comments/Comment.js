@@ -7,16 +7,21 @@ import NewComment from './reply'
 const Comment = () => {
 
 const [comments, setComment] = useState([])
-// const [replies, setReply] = useState([])
+const [rep, setRep] = useState(false)
 const [scoreval, setScoreval] = useState()
 const [loading, setLoading] = useState(true)
 const [delclick, setdelClick] = useState(false)
 const [replyId, setReplyId] = useState(0)
+const [editId, setEditId] = useState(0)
+const [messageclick, setMessageclick] = useState(false)
+
 const [replyclick, setreplyclick] = useState(false)
+const [editclick, setEditclick] = useState(false)
 // const [message, setMessage] = useState("")
 const [currentUser, setcurrentUser] = useState({})
 const [commentreply, setCommentreply]= useState([])
 const [del, setDel]= useState(false)
+
 
 
 // new object template to be pushed to reply array;content = message in state
@@ -30,12 +35,13 @@ const [del, setDel]= useState(false)
  */
 
 
-function handleMessage(message){
-   console.log('addtext', message)
+function handleMessage(message,id){
+   console.log('addtext', message,id)
 !replyclick?setreplyclick(true):setreplyclick(false)
-
+setMessageclick(true)
 
 const userobj = {
+        id :Math.random(new Date()),
    user: {
       ...currentUser
     },
@@ -45,26 +51,28 @@ const userobj = {
 }
 // setMessage(message)
 console.log(userobj)
-console.log(comments.replies)
 comments.map((reply)=>{
 const {replies,id}=reply
 console.log(id)
-id === userobj.Parentid?replies.push(userobj):<PostedComment/>
+if(id === userobj.Parentid){replies.push(userobj)}
+// ?:<PostedComment/>
  })
 }
 
 
-const handleDelete=(id)=>{
+const handleDelete=(id,e)=>{
    console.log(id)
- return comments.map(reply=>{
-   reply.replies.map(repd=>{
-const newArr = commentreply.filter(rep=>rep.id !== id)
-setDel(true)
+ const newComment = comments.reduce(function(acc, curr){
+   console.log(comments.replies)
+  const newv= comments.map(comment=>{
+  const array =  comment.replies.filter(rep => rep.id !== id)
+   setRep(true)
+   acc = array
+  console.log(array)
+  setComment(array)
    })
-// console.log(newArr)
-// setComment([reply.replies=newArr],...reply)
+},[])
 
-})
 
 }
 
@@ -72,11 +80,14 @@ function handleclick(id){
    setReplyId(id)
    console.log(id)
    setreplyclick(false)
-   
+   !messageclick ?setMessageclick(true):setMessageclick(false)
 
 }
-
-
+function handleEdit(id,message){
+   setEditId(id)
+setEditclick(true)
+console.log(message)
+}
    useEffect(() => {
    
 const getData =  async() => {
@@ -89,31 +100,21 @@ const data = await fetch('data.json',{
 
 const resp = await data.json()
         setLoading(false)
-        console.log(resp.comments[1].replies)
         setComment(resp.comments)
-      //   setReply(resp.comments[1].replies)
          console.log(resp.comments.replies)
-         // setCommentreply(resp.comments[0].replies)
          setcurrentUser(resp.currentUser)
-         // comments.map(comment=>{
-         //    comment.replies.length > 0 &&
-         //    setCommentreply(comment?.replies)
-         // })
+         comments.map(comment=>{
+         //  let newComArr=   comment.filter(com=> com.id == )
+         })
          console.log(  commentreply)
        }
        getData()
   
      }, [])
 
-
-
-
      if(loading){
       return <h1> Loading ...</h1>
    }
-
-
-
 
 
 
@@ -122,16 +123,10 @@ const resp = await data.json()
        {/* Mapping main comments */}
 {
 comments.map(comment=>{
-   const { id, content, createdAt, score, user,replies} = comment
-   {/* console.log(score) */}
-   const {image,username} = user
+   const { id, content, createdAt, score, user:{image,username},replies} = comment
    const {png, webp}= image
-const [one,two]= replies
 console.log (comments)
-console.log (two)
-{/* id===userobj.Parentid && replyclick?replies.push(userobj):<InputComment/> */}
 
-{/* replyclick && userobj.id == replyId? replies.push(userobj):<InputComment/> */}
    return(
       <div key={id} className='reply-container'>
       
@@ -164,7 +159,7 @@ console.log (two)
 user is replying to. If it is, then it will render the InputComment component. If it is not, then it
 will render null. */}
 
-{replyId == id? <InputComment buttonAction='REPLY' postClick={handleMessage}/>:null}
+{replyId === id && !editclick && !messageclick?<InputComment buttonAction='REPLY' postClick={handleMessage}/>:null}
 <div> 
 
 <div>
@@ -173,14 +168,17 @@ will render null. */}
 {
   replies.length > 0 && 
 replies.map(rep=>{
-   console.log(rep) 
-   const {user,score,createdAt,id,content}= rep
- const {image,username} = user
+   console.log(comment.replies) 
+   const { id, content, createdAt, score, user:{image,username},} = rep
+
 const {png, webp}= image
 const  newCreatedAt = new Date(rep.createdAt).toLocaleDateString()
 console.log(rep.score) 
    console.log('mapinho')
-if(del & id == 4)return null
+if(del & id === 4){return null}
+if(editclick && editId === id){
+   return <InputComment buttonAction='UPDATE' postClick={handleMessage} />
+}
    return(
       <div key={rep.id} className='comment-container'>
 <div  className='user-profile'>
@@ -188,10 +186,10 @@ if(del & id == 4)return null
    <img src={png} alt='' className='user-img'/>
    <h4> {username} </h4>
    <span> {createdAt}</span> 
-   {username =='juliusomo'?
+   {username === 'juliusomo'?
       <div>
    <Modal handlecloseClick={()=>handleDelete(id)}/>
-   <button><span>Edit</span><svg width="14" height="14" xmlns="http://www.w3.org/2000/svg"><path d="M13.479 2.872 11.08.474a1.75 1.75 0 0 0-2.327-.06L.879 8.287a1.75 1.75 0 0 0-.5 1.06l-.375 3.648a.875.875 0 0 0 .875.954h.078l3.65-.333c.399-.04.773-.216 1.058-.499l7.875-7.875a1.68 1.68 0 0 0-.061-2.371Zm-2.975 2.923L8.159 3.449 9.865 1.7l2.389 2.39-1.75 1.706Z" fill="#5357B6"/></svg></button>
+   <button><span onClick={()=>handleEdit(id)} >Edit</span><svg width="14" height="14" xmlns="http://www.w3.org/2000/svg"><path d="M13.479 2.872 11.08.474a1.75 1.75 0 0 0-2.327-.06L.879 8.287a1.75 1.75 0 0 0-.5 1.06l-.375 3.648a.875.875 0 0 0 .875.954h.078l3.65-.333c.399-.04.773-.216 1.058-.499l7.875-7.875a1.68 1.68 0 0 0-.061-2.371Zm-2.975 2.923L8.159 3.449 9.865 1.7l2.389 2.39-1.75 1.706Z" fill="#5357B6"/></svg></button>
    </div>:null}
 </div>
 
